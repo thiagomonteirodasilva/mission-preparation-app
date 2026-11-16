@@ -1,9 +1,9 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import YoungListItem from '../../components/YoungListItem';
-import { loadYoungsByUnit } from '../../db/repository';
-import { Young } from '../../types';
+import YoungListItem from '../../../components/YoungListItem';
+import { loadYoungsByUnit } from '../../../db/repository';
+import { Young } from '../../../types';
 
 export default function UnitDetailScreen() {
   const { unitId } = useLocalSearchParams<{ unitId?: string }>();
@@ -66,8 +66,8 @@ export default function UnitDetailScreen() {
       {error ? <Text className="text-red-600">{error}</Text> : null}
 
       <View className="space-y-3">
-        {youngs.map((y) => (
-          <YoungListItem key={y.id} young={y} onPress={handleOpenYoung} />
+        {youngs.map((young) => (
+          <YoungListItem key={young.id} young={young} onPress={handleOpenYoung} />
         ))}
         {youngs.length === 0 && !loading ? <Text className="text-slate-600">Nenhum jovem encontrado.</Text> : null}
       </View>

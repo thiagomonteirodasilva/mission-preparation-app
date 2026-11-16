@@ -78,6 +78,73 @@ export async function loadUnits(): Promise<Unit[]> {
   return db.getAllSync<Unit>('SELECT id, name, createdAt FROM units ORDER BY name COLLATE NOCASE ASC;', []);
 }
 
+export async function loadUnitById(unitId: string): Promise<Unit | null> {
+  if (!unitId.trim()) return null;
+
+  return db.getFirstSync<Unit>('SELECT id, name, createdAt FROM units WHERE id = ?;', [unitId]);
+}
+
+export async function updateUnit(unitId: string, name: string): Promise<Unit> {
+  const trimmedUnitId = unitId.trim();
+  const trimmedName = name.trim();
+
+  if (!trimmedUnitId) {
+    throw new Error('Unidade não informada.');
+  }
+
+  if (!trimmedName) {
+    throw new Error('Nome da unidade é obrigatório.');
+  }
+
+  const result = db.runSync('UPDATE units SET name = ? WHERE id = ?;', [trimmedName, trimmedUnitId]);
+
+  if (result.changes === 0) {
+    throw new Error('Unidade não encontrada.');
+  }
+
+  const updatedUnit = await loadUnitById(trimmedUnitId);
+  if (!updatedUnit) {
+    throw new Error('Unidade não encontrada.');
+  }
+
+  return updatedUnit;
+}
+
+export async function deleteUnitWithDependents(unitId: string): Promise<void> {
+  const trimmedUnitId = unitId.trim();
+
+  if (!trimmedUnitId) {
+    throw new Error('Unidade não informada.');
+  }
+
+  db.execSync('BEGIN TRANSACTION;');
+
+  try {
+    db.runSync(
+      'DELETE FROM progress_entries WHERE youngId IN (SELECT id FROM youngs WHERE unitId = ?);',
+      [trimmedUnitId],
+    );
+    db.runSync('DELETE FROM youngs WHERE unitId = ?;', [trimmedUnitId]);
+
+    const result = db.runSync('DELETE FROM units WHERE id = ?;', [trimmedUnitId]);
+    if (result.changes === 0) {
+      throw new Error('Unidade não encontrada.');
+    }
+
+    db.execSync('COMMIT;');
+  } catch (error) {
+    try {
+      db.execSync('ROLLBACK;');
+    } catch (rollbackError) {
+      const operationMessage = error instanceof Error ? error.message : String(error);
+      const rollbackMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+      throw new Error(`${operationMessage} Não foi possível desfazer a transação: ${rollbackMessage}`);
+    }
+
+    throw error;
+  }
+}
+
 export async function loadYoungsByUnit(unitId: string): Promise<Young[]> {
   return db.getAllSync<Young>(
     'SELECT id, unitId, name, age, gender, createdAt, updatedAt FROM youngs WHERE unitId = ? ORDER BY name COLLATE NOCASE ASC;',
