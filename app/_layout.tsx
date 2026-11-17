@@ -1,6 +1,7 @@
 import React from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import '../styles/global.css';
 
 export default function RootLayout() {
@@ -19,7 +20,7 @@ export default function RootLayout() {
             hitSlop={8}
             onPress={() => (canGoBack ? router.back() : router.replace('/'))}
           >
-            <Text className="text-white">‹ Voltar</Text>
+            <MaterialIcons name="arrow-back" size={24} color="#ffffff" />
           </Pressable>
         ),
       }}

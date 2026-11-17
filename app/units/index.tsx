@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
@@ -29,7 +30,8 @@ export default function UnitsScreen() {
         className="rounded-lg border border-slate-300 bg-white p-3 text-base"
       />
 
-      <Pressable onPress={handleSave} className="mt-6 rounded-lg bg-blue-600 p-4">
+      <Pressable onPress={handleSave} className="mt-6 flex-row items-center justify-center gap-2 rounded-lg bg-sky-700 p-4">
+        <MaterialIcons name="save" size={20} color="#ffffff" />
         <Text className="text-center text-base font-semibold text-white">Salvar</Text>
       </Pressable>
 

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Unit, Young } from '../types';
@@ -56,8 +57,9 @@ export default function UnitAccordion({ units, expandedUnitIds, onToggleUnit, on
                 accessibilityRole="button"
                 accessibilityState={{ expanded: menuUnitId === unit.id }}
                 onPress={() => setMenuUnitId(unit.id)}
-                className="rounded-lg bg-blue-600 px-3 py-2"
+                className="flex-row items-center gap-2 rounded-lg bg-sky-700 px-3 py-2"
               >
+                <MaterialIcons name="list" size={18} color="#ffffff" />
                 <Text className="text-sm font-medium text-white">Ações</Text>
               </Pressable>
             </View>

@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -156,8 +157,9 @@ export default function YoungDetailScreen() {
 
       <Pressable
         onPress={handleSave}
-        className="rounded-lg bg-sky-700 p-4"
+        className="flex-row items-center justify-center gap-2 rounded-lg bg-sky-700 p-4"
       >
+        <MaterialIcons name="save" size={20} color="#ffffff" />
         <Text className="text-center text-base font-semibold text-white">Salvar</Text>
       </Pressable>
 
@@ -177,8 +179,9 @@ export default function YoungDetailScreen() {
         <ProgressEntryList entries={entries} />
       </View>
 
-      <Pressable onPress={() => setShowDelete(true)} className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4">
-        <Text className="text-center text-base font-semibold text-red-700">Excluir jovem</Text>
+      <Pressable onPress={() => setShowDelete(true)} className="mt-6 flex-row items-center justify-center gap-2 rounded-lg bg-red-600 p-4">
+        <MaterialIcons name="delete" size={20} color="#ffffff" />
+        <Text className="text-center text-base font-semibold text-white">Excluir jovem</Text>
       </Pressable>
 
       <ConfirmDeleteModal visible={showDelete} youngName={young.name} onCancel={() => setShowDelete(false)} onConfirm={handleDelete} />

@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -70,7 +71,8 @@ export default function HomeScreen() {
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-2xl font-bold text-slate-900">Unidades</Text>
         <Link href="/units" asChild>
-          <Pressable className="rounded-lg bg-blue-600 px-3 py-2">
+          <Pressable className="flex-row items-center gap-2 rounded-lg bg-sky-700 px-3 py-2">
+            <MaterialIcons name="group" size={18} color="#ffffff" />
             <Text className="text-sm font-medium text-white">+ unidade</Text>
           </Pressable>
         </Link>

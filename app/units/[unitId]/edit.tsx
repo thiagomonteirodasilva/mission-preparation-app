@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput } from 'react-native';
@@ -109,8 +110,9 @@ export default function EditUnitScreen() {
         accessibilityRole="button"
         disabled={loading || !unitLoaded || saving}
         onPress={handleSave}
-        className="mt-6 rounded-lg bg-blue-600 p-4 disabled:opacity-50"
+        className="mt-6 flex-row items-center justify-center gap-2 rounded-lg bg-sky-700 p-4 disabled:opacity-50"
       >
+        <MaterialIcons name="save" size={20} color="#ffffff" />
         <Text className="text-center text-base font-semibold text-white">
           {saving ? 'Salvando...' : 'Salvar'}
         </Text>

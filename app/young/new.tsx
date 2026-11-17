@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -82,7 +83,8 @@ export default function NewYoungScreen() {
 
       {error ? <Text className="mb-3 text-sm text-red-600">{error}</Text> : null}
 
-      <Pressable onPress={handleSave} className="rounded-lg bg-blue-600 p-4">
+      <Pressable onPress={handleSave} className="flex-row items-center justify-center gap-2 rounded-lg bg-sky-700 p-4">
+        <MaterialIcons name="save" size={20} color="#ffffff" />
         <Text className="text-center text-base font-semibold text-white">Salvar</Text>
       </Pressable>
 
