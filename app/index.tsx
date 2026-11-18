@@ -68,12 +68,11 @@ export default function HomeScreen() {
 
   return (
     <ScrollView className="flex-1 bg-slate-50 p-6">
-      <View className="mb-6 flex-row items-center justify-between">
-        <Text className="text-2xl font-bold text-slate-900">Unidades</Text>
+      <View className="mb-6">
         <Link href="/units" asChild>
-          <Pressable className="flex-row items-center gap-2 rounded-lg bg-sky-700 px-3 py-2">
-            <MaterialIcons name="group" size={18} color="#ffffff" />
-            <Text className="text-sm font-medium text-white">+ unidade</Text>
+          <Pressable className="w-full flex-row items-center justify-center gap-2 rounded-lg bg-sky-700 p-4">
+            <MaterialIcons name="group" size={20} color="#ffffff" />
+            <Text className="text-center text-base font-semibold text-white">Nova Unidade</Text>
           </Pressable>
         </Link>
       </View>

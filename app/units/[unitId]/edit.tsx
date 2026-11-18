@@ -91,8 +91,6 @@ export default function EditUnitScreen() {
 
   return (
     <ScrollView className="flex-1 bg-slate-50 p-6">
-      <Text className="mb-4 text-2xl font-bold text-slate-900">Editar Unidade</Text>
-
       {loading ? <Text className="mb-3 text-slate-600">Carregando unidade...</Text> : null}
 
       <TextInput

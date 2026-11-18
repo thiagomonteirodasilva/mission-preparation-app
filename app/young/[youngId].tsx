@@ -141,8 +141,6 @@ export default function YoungDetailScreen() {
 
   return (
     <ScrollView className="flex-1 bg-slate-50 p-6">
-      <Text className="mb-4 text-2xl font-bold text-slate-900">Detalhes do jovem</Text>
-
       <TextInput value={name} onChangeText={setName} className="mb-3 rounded-lg border border-slate-300 bg-white p-3 text-base" />
       <TextInput value={age} onChangeText={setAge} keyboardType="numeric" className="mb-3 rounded-lg border border-slate-300 bg-white p-3 text-base" />
 

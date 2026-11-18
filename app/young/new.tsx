@@ -55,8 +55,6 @@ export default function NewYoungScreen() {
 
   return (
     <ScrollView className="flex-1 bg-slate-50 p-6">
-      <Text className="mb-4 text-2xl font-bold text-slate-900">Novo jovem</Text>
-
       <TextInput
         value={name}
         onChangeText={setName}
