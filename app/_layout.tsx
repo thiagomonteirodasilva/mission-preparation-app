@@ -1,7 +1,7 @@
 import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import '../styles/global.css';
 
 export default function RootLayout() {
@@ -12,6 +12,19 @@ export default function RootLayout() {
         headerBackground: () => <View className="flex-1 bg-sky-700" />,
         headerTintColor: '#ffffff',
         headerTitleStyle: { color: '#ffffff', fontWeight: '600' },
+        headerTitle: ({ children, tintColor }) => (
+          <Text
+            numberOfLines={1}
+            style={{
+              color: tintColor ?? '#ffffff',
+              fontSize: Platform.OS === 'android' ? 20 : 17,
+              fontWeight: '600',
+              marginLeft: 8,
+            }}
+          >
+            {children}
+          </Text>
+        ),
         headerBackVisible: false,
         headerLeft: ({ canGoBack }) => (
           <Pressable
