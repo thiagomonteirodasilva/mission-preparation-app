@@ -6,6 +6,7 @@ export default function UnitRouteLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+        statusBarStyle: 'light',
       }}
     >
       <Stack.Screen name="edit" />

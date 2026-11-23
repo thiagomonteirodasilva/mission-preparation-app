@@ -11,6 +11,12 @@ type UnitAccordionProps = {
   onRemoveUnit: (unit: Unit) => Promise<void>;
 };
 
+function youngIconName(gender: Young['gender'] | undefined) {
+  if (gender === 'male') return 'face';
+  if (gender === 'female') return 'face-3';
+  return 'account-circle';
+}
+
 export default function UnitAccordion({ units, expandedUnitIds, onToggleUnit, onRemoveUnit }: UnitAccordionProps) {
   const [menuUnitId, setMenuUnitId] = useState<string | null>(null);
   const [confirmationUnit, setConfirmationUnit] = useState<Unit | null>(null);
@@ -71,8 +77,14 @@ export default function UnitAccordion({ units, expandedUnitIds, onToggleUnit, on
                 )}
                 {sortedYoungs.map((young) => (
                   <Link key={young.id} href={`/young/${young.id}`} asChild>
-                    <Pressable className="rounded-lg border border-slate-200 bg-slate-50 p-2">
-                      <Text className="text-base text-slate-800">
+                    <Pressable className="flex-row items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                      <MaterialIcons
+                        name={youngIconName(young.gender)}
+                        size={24}
+                        color="#475569"
+                        accessible={false}
+                      />
+                      <Text className="flex-1 text-base text-slate-800">
                         {young.name} ({young.age} anos)
                       </Text>
                     </Pressable>
