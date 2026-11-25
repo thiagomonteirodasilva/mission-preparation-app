@@ -7,6 +7,7 @@ export default function UnitRouteLayout() {
       screenOptions={{
         headerShown: false,
         statusBarStyle: 'light',
+        contentStyle: { backgroundColor: '#0369a1' },
       }}
     >
       <Stack.Screen name="edit" />

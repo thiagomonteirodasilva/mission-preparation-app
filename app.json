@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "mission-preparation-app",
+    "slug": "mission-preparation-app",
+    "version": "1.0.0",
+    "backgroundColor": "#0369a1",
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#0369a1",
+      "translucent": false
+    }
+  }
+}

@@ -1,25 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { router, Stack } from 'expo-router';
+import { router, Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Pressable, Text, View } from 'react-native';
+import * as SystemUI from 'expo-system-ui';
+import {
+  InteractionManager,
+  Platform,
+  Pressable,
+  StatusBar as NativeStatusBar,
+  Text,
+  View,
+} from 'react-native';
 import '../styles/global.css';
+
+SystemUI.setBackgroundColorAsync('#0369a1').catch(() => undefined);
 
 export default function RootLayout() {
   const [statusBarReady, setStatusBarReady] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Expo Router mounts its automatic status bar after the root layout.
+    // Keep the app's status bar configuration after Expo Router's automatic one.
     setStatusBarReady(true);
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      NativeStatusBar.setBarStyle('light-content', false);
+      NativeStatusBar.setBackgroundColor('#0369a1', false);
+      NativeStatusBar.setTranslucent(false);
+    });
+
+    return () => task.cancel();
+  }, [pathname]);
+
   return (
     <View className="flex-1 bg-sky-700">
-      {statusBarReady && <StatusBar style="light" backgroundColor="#0369a1" translucent={false} />}
+      {statusBarReady && (
+        <StatusBar
+          style="light"
+          backgroundColor="#0369a1"
+          translucent={false}
+        />
+      )}
       <Stack
         screenOptions={{
           headerShown: true,
           statusBarStyle: 'light',
+          contentStyle: { backgroundColor: '#0369a1' },
           headerBackground: () => <View className="flex-1 bg-sky-700" />,
           headerTintColor: '#ffffff',
           headerTitleStyle: { color: '#ffffff', fontWeight: '600' },
