@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput } from 'react-native';
 import { hideSaveToast, showSaveToast } from '../../../components/SaveToast';
 import { loadUnitById, updateUnit } from '../../../db/repository';
@@ -28,7 +28,6 @@ async function loadEditableUnit(unitId?: string): Promise<UnitLoadResult> {
 
 export default function EditUnitScreen() {
   const { unitId } = useLocalSearchParams<{ unitId?: string }>();
-  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(true);
   const [unitLoaded, setUnitLoaded] = useState(false);
@@ -39,12 +38,6 @@ export default function EditUnitScreen() {
     hideSaveToast();
     setError(message);
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      navigation.getParent()?.setOptions({ title: 'Editar Unidade' });
-    }, [navigation]),
-  );
 
   useEffect(() => {
     let isActive = true;

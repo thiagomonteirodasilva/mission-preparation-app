@@ -83,7 +83,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ title: 'Unidades', headerLeft: () => null }} />
         <Stack.Screen name="units/index" options={{ title: 'Nova unidade' }} />
-        <Stack.Screen name="units/[unitId]" options={{ title: 'Editar unidade' }} />
+        <Stack.Screen name="units/[unitId]/edit" options={{ title: 'Editar unidade' }} />
         <Stack.Screen name="young/new" options={{ title: 'Novo jovem' }} />
         <Stack.Screen name="young/[youngId]" options={{ title: 'Detalhes do jovem' }} />
         <Stack.Screen name="+not-found" options={{ title: 'Página não encontrada' }} />
