@@ -74,6 +74,37 @@ export async function updateYoung(young: Young): Promise<Young> {
   return { ...young, name: trimmedName, age, updatedAt };
 }
 
+export async function deleteYoungWithDependents(youngId: string): Promise<void> {
+  const trimmedYoungId = youngId.trim();
+
+  if (!trimmedYoungId) {
+    throw new Error('Jovem não informado.');
+  }
+
+  db.execSync('BEGIN TRANSACTION;');
+
+  try {
+    db.runSync('DELETE FROM progress_entries WHERE youngId = ?;', [trimmedYoungId]);
+    const result = db.runSync('DELETE FROM youngs WHERE id = ?;', [trimmedYoungId]);
+
+    if (result.changes === 0) {
+      throw new Error('Jovem não encontrado.');
+    }
+
+    db.execSync('COMMIT;');
+  } catch (error) {
+    try {
+      db.execSync('ROLLBACK;');
+    } catch (rollbackError) {
+      const operationMessage = error instanceof Error ? error.message : String(error);
+      const rollbackMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+      throw new Error(`${operationMessage} Não foi possível desfazer a transação: ${rollbackMessage}`);
+    }
+
+    throw error;
+  }
+}
+
 export async function loadUnits(): Promise<Unit[]> {
   return db.getAllSync<Unit>('SELECT id, name, createdAt FROM units ORDER BY name COLLATE NOCASE ASC;', []);
 }

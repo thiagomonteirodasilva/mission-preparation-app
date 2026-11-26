@@ -1,12 +1,12 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import ProgressEntryList from '../../components/ProgressEntryList';
 import { hideSaveToast, showSaveToast } from '../../components/SaveToast';
 import { VALIDATION_MESSAGES } from '../../constants/validation';
-import { loadProgressEntriesForYoung, loadYoungById, saveProgressEntry, updateYoung } from '../../db/repository';
+import { deleteYoungWithDependents, loadProgressEntriesForYoung, loadYoungById, saveProgressEntry, updateYoung } from '../../db/repository';
 import { ProgressEntry, Young } from '../../types';
 
 export default function YoungDetailScreen() {
@@ -19,6 +19,9 @@ export default function YoungDetailScreen() {
   const [newEntryText, setNewEntryText] = useState('');
   const [error, setError] = useState('');
   const [showDelete, setShowDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deletingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
 
   function showError(message: string) {
@@ -128,8 +131,23 @@ export default function YoungDetailScreen() {
   }
 
   async function handleDelete() {
-    setShowDelete(false);
-    router.back();
+    if (!young || deletingRef.current) return;
+
+    deletingRef.current = true;
+    setIsDeleting(true);
+    setDeleteError('');
+    hideSaveToast();
+
+    try {
+      await deleteYoungWithDependents(young.id);
+      setShowDelete(false);
+      router.back();
+    } catch {
+      setDeleteError('Não foi possível excluir o jovem. Tente novamente.');
+    } finally {
+      deletingRef.current = false;
+      setIsDeleting(false);
+    }
   }
 
   if (!young) {
@@ -179,12 +197,12 @@ export default function YoungDetailScreen() {
         <ProgressEntryList entries={entries} />
       </View>
 
-      <Pressable onPress={() => setShowDelete(true)} className="mt-6 flex-row items-center justify-center gap-2 rounded-lg bg-red-600 p-4">
+      <Pressable onPress={() => { setDeleteError(''); setShowDelete(true); }} className="mt-6 flex-row items-center justify-center gap-2 rounded-lg bg-red-600 p-4">
         <MaterialIcons name="delete" size={20} color="#ffffff" />
         <Text className="text-center text-base font-semibold text-white">Excluir jovem</Text>
       </Pressable>
 
-      <ConfirmDeleteModal visible={showDelete} youngName={young.name} onCancel={() => setShowDelete(false)} onConfirm={handleDelete} />
+      <ConfirmDeleteModal visible={showDelete} youngName={young.name} onCancel={() => setShowDelete(false)} onConfirm={handleDelete} deleting={isDeleting} error={deleteError} />
     </ScrollView>
   );
 }
