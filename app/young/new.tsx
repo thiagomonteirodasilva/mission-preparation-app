@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import SaveToast from '../../components/SaveToast';
+import { hideSaveToast, showSaveToast } from '../../components/SaveToast';
 import { saveYoung } from '../../db/repository';
 import { VALIDATION_MESSAGES } from '../../constants/validation';
 
@@ -12,44 +12,47 @@ export default function NewYoungScreen() {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [error, setError] = useState('');
-  const [showToast, setShowToast] = useState(false);
+
+  function showError(message: string) {
+    hideSaveToast();
+    setError(message);
+  }
 
   async function handleSave() {
     const trimmedName = name.trim();
     const parsedAge = Number(age);
 
     if (!unitId) {
-      setError('Unidade não encontrada.');
+      showError('Unidade não encontrada.');
       return;
     }
 
     if (!trimmedName) {
-      setError('Nome é obrigatório.');
+      showError('Nome é obrigatório.');
       return;
     }
 
     if (!Number.isInteger(parsedAge)) {
-      setError('Idade inválida.');
+      showError('Idade inválida.');
       return;
     }
 
     if (parsedAge < 16) {
-      setError(VALIDATION_MESSAGES.minAge);
+      showError(VALIDATION_MESSAGES.minAge);
       return;
     }
 
     if (parsedAge > 25) {
-      setError(VALIDATION_MESSAGES.maxAge);
+      showError(VALIDATION_MESSAGES.maxAge);
       return;
     }
 
     try {
       await saveYoung({ unitId, name: trimmedName, age: parsedAge, gender });
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
+      showSaveToast();
       router.back();
     } catch (saveError) {
-      setError((saveError as Error).message || 'Não foi possível salvar.');
+      showError((saveError as Error).message || 'Não foi possível salvar.');
     }
   }
 
@@ -85,8 +88,6 @@ export default function NewYoungScreen() {
         <MaterialIcons name="save" size={20} color="#ffffff" />
         <Text className="text-center text-base font-semibold text-white">Salvar</Text>
       </Pressable>
-
-      <SaveToast visible={showToast} />
     </ScrollView>
   );
 }

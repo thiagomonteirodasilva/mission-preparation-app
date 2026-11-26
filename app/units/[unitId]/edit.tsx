@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput } from 'react-native';
+import { hideSaveToast, showSaveToast } from '../../../components/SaveToast';
 import { loadUnitById, updateUnit } from '../../../db/repository';
 import { Unit } from '../../../types';
 
@@ -34,6 +35,11 @@ export default function EditUnitScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  function showError(message: string) {
+    hideSaveToast();
+    setError(message);
+  }
+
   useFocusEffect(
     useCallback(() => {
       navigation.getParent()?.setOptions({ title: 'Editar Unidade' });
@@ -52,7 +58,7 @@ export default function EditUnitScreen() {
         setName(unit.name);
         setUnitLoaded(true);
       } else {
-        setError(loadError);
+        showError(loadError);
       }
 
       setLoading(false);
@@ -67,12 +73,12 @@ export default function EditUnitScreen() {
     const trimmedName = name.trim();
 
     if (!unitId) {
-      setError('Unidade não informada.');
+      showError('Unidade não informada.');
       return;
     }
 
     if (!trimmedName) {
-      setError('Nome da unidade é obrigatório.');
+      showError('Nome da unidade é obrigatório.');
       return;
     }
 
@@ -81,9 +87,10 @@ export default function EditUnitScreen() {
 
     try {
       await updateUnit(unitId, trimmedName);
+      showSaveToast();
       router.back();
     } catch (saveError) {
-      setError((saveError as Error).message || 'Não foi possível salvar a unidade.');
+      showError((saveError as Error).message || 'Não foi possível salvar a unidade.');
     } finally {
       setSaving(false);
     }

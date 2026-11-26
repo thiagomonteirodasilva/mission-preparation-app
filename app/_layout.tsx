@@ -3,6 +3,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router, Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
+import Toast from 'react-native-toast-message';
 import {
   InteractionManager,
   Platform,
@@ -11,6 +12,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { saveToastConfig } from '../components/SaveToast';
 import '../styles/global.css';
 
 SystemUI.setBackgroundColorAsync('#0369a1').catch(() => undefined);
@@ -86,6 +88,7 @@ export default function RootLayout() {
         <Stack.Screen name="young/[youngId]" options={{ title: 'Detalhes do jovem' }} />
         <Stack.Screen name="+not-found" options={{ title: 'Página não encontrada' }} />
       </Stack>
+      <Toast config={saveToastConfig} position="bottom" visibilityTime={3000} bottomOffset={32} />
     </View>
   );
 }

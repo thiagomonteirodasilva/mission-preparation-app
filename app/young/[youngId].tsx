@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import ProgressEntryList from '../../components/ProgressEntryList';
-import SaveToast from '../../components/SaveToast';
+import { hideSaveToast, showSaveToast } from '../../components/SaveToast';
 import { VALIDATION_MESSAGES } from '../../constants/validation';
 import { loadProgressEntriesForYoung, loadYoungById, saveProgressEntry, updateYoung } from '../../db/repository';
 import { ProgressEntry, Young } from '../../types';
@@ -18,10 +18,13 @@ export default function YoungDetailScreen() {
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [newEntryText, setNewEntryText] = useState('');
   const [error, setError] = useState('');
-  const [showToast, setShowToast] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [toastMessage, setToastMessage] = useState('Salvo com sucesso');
+
+  function showError(message: string) {
+    hideSaveToast();
+    setError(message);
+  }
 
   useEffect(() => {
     let isActive = true;
@@ -31,7 +34,7 @@ export default function YoungDetailScreen() {
       setYoung(null);
       setEntries([]);
       setIsLoading(true);
-      setShowToast(false);
+      setError('');
 
       try {
         if (!youngId) throw new Error('youngId is required');
@@ -52,8 +55,7 @@ export default function YoungDetailScreen() {
         if (!isActive) return;
 
         setIsLoading(false);
-        setToastMessage('Não foi possível exibir as informações do jovem. Tente novamente');
-        setShowToast(true);
+        showError('Não foi possível exibir as informações do jovem. Tente novamente');
         backTimer = setTimeout(() => router.back(), 2000);
       }
     }
@@ -71,22 +73,22 @@ export default function YoungDetailScreen() {
     const parsedAge = Number(age);
 
     if (!name.trim()) {
-      setError('Nome é obrigatório.');
+      showError('Nome é obrigatório.');
       return;
     }
 
     if (!Number.isInteger(parsedAge)) {
-      setError('Idade inválida.');
+      showError('Idade inválida.');
       return;
     }
 
     if (parsedAge < 16) {
-      setError(VALIDATION_MESSAGES.minAge);
+      showError(VALIDATION_MESSAGES.minAge);
       return;
     }
 
     if (parsedAge > 25) {
-      setError(VALIDATION_MESSAGES.maxAge);
+      showError(VALIDATION_MESSAGES.maxAge);
       return;
     }
 
@@ -97,32 +99,32 @@ export default function YoungDetailScreen() {
       setAge(String(updatedYoung.age));
       setGender(updatedYoung.gender);
       setError('');
-      setToastMessage('Salvo com sucesso');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
+      showSaveToast();
     } catch (saveError) {
-      setError((saveError as Error).message || 'Não foi possível salvar as informações do jovem.');
+      showError((saveError as Error).message || 'Não foi possível salvar as informações do jovem.');
     }
   }
 
   async function handleAddEntry() {
     if (!young || !newEntryText.trim()) {
-      setError('Relato é obrigatório.');
+      showError('Relato é obrigatório.');
       return;
     }
 
     if (newEntryText.trim().length > 1000) {
-      setError(VALIDATION_MESSAGES.maxProgressLength);
+      showError(VALIDATION_MESSAGES.maxProgressLength);
       return;
     }
 
-    const saved = await saveProgressEntry({ youngId: young.id, text: newEntryText.trim() });
-    setEntries((previous) => [saved, ...previous].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-    setNewEntryText('');
-    setError('');
-    setToastMessage('Salvo com sucesso');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
+    try {
+      const saved = await saveProgressEntry({ youngId: young.id, text: newEntryText.trim() });
+      setEntries((previous) => [saved, ...previous].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      setNewEntryText('');
+      setError('');
+      showSaveToast();
+    } catch (saveError) {
+      showError((saveError as Error).message || 'Não foi possível salvar o relato.');
+    }
   }
 
   async function handleDelete() {
@@ -134,7 +136,7 @@ export default function YoungDetailScreen() {
     return (
       <View className="flex-1 bg-slate-50 p-6">
         {isLoading ? <Text className="text-base text-slate-600">Carregando...</Text> : null}
-        <SaveToast visible={showToast} message={toastMessage} />
+        {error ? <Text className="text-sm text-red-600">{error}</Text> : null}
       </View>
     );
   }
@@ -183,7 +185,6 @@ export default function YoungDetailScreen() {
       </Pressable>
 
       <ConfirmDeleteModal visible={showDelete} youngName={young.name} onCancel={() => setShowDelete(false)} onConfirm={handleDelete} />
-      <SaveToast visible={showToast} />
     </ScrollView>
   );
 }
